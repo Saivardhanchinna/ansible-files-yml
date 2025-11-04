@@ -1,0 +1,58 @@
+vim a1.yml
+--------------------------------------------------------
+---
+- name: insatll apache2
+  apt:
+    name: "{{item.a}}"
+    state: "{{item.b}}"
+    update_cache: "{{item.c}}"
+  with_items:
+    - {a: apache2, b: present, c: yes}
+...
+========================================================
+vim a2.yml
+---------------------------------------------------------
+---
+- name: edit index.html
+  copy:
+    content: "wel come to devops"
+    dest: /var/www/html/index.html
+...
+=============================================================
+vim a3.yml
+----------------------------------------------------------
+---
+- name: resrart the apache2
+  service:
+    name: apache2
+    state: restarted
+...
+==========================================================
+vim a4.yml
+-----------------------------------------------------------
+---
+- name: chech url respone
+  uri:
+    url: "{{item.f}}"
+    status_code: 200
+  with_items:
+    - {f: http://172.31.14.1}
+...
+============================================================
+Parent playbook
+===========================================================
+parent.yml
+--------------------------------------------------------
+---
+- name: Configuring apache using child playbooks
+  hosts: myserver
+  tasks:
+    - name: call multiple child playbook
+      include_tasks: "{{item}}"
+      with_items:
+        - a1.yml
+        - a2.yml
+        - a3.yml
+        - a4.yml
+...
+==============================================================
