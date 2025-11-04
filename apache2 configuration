@@ -1,0 +1,28 @@
+---
+- name: Configuring apache
+  hosts: myserver
+  tasks:
+    - name: install apache
+      apt:
+        name: "{{item.a}}"
+        state: "{{item.b}}"
+        update_cache: "{{item.c}}"
+      loop:
+        - {a: apache2, b: present, c: yes}
+    - name: edit the index.html
+      copy:
+        content: "wel come dexonpvt hyd"
+        dest: /var/www/html/index.html
+    - name: Restart the apache2
+      service:
+        name: "{{item.d}}"
+        state: "{{item.e}}"
+      loop:
+        - {d: apache2, e: restarted}
+    - name: Check apache2 url response
+      uri:
+        url: "{{item.f}}"
+        status_code: 200
+      loop:
+        - {f: http://172.31.14.1}
+...
